@@ -1,4 +1,3 @@
-
 # bootstrap-dialog
 
   Bringing component/dialog to bootstrap.
@@ -8,7 +7,7 @@
     $ component install mikanda/bootstrap-dialog
 
 ## Examples
-  See test/inde.html
+  See test/index.html
 
 ## API
 
