@@ -1,0 +1,7 @@
+/*
+ * if closable: set min-height
+ * if no title is set, the close-button is still in the header
+ */
+.closable .modal-header {
+  min-height: 30px;
+}

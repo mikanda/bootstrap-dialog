@@ -1,0 +1,24 @@
+{
+  "name": "bootstrap-dialog",
+  "repo": "mikanda/bootstrap-dialog",
+  "description": "Bringing component/dialog to bootstrap.",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "component/dialog": "0.0.6",
+    "luka5/bootstrap-modal": "*",
+    "component/jquery": "*"
+  },
+  "development": {
+    "component/jquery": "*",
+    "luka5/bootstrap-buttons": "*"
+  },
+  "license": "LGPLv3",
+  "scripts": [
+    "index.js",
+    "template.js"
+  ],
+  "styles": [
+    "bootstrap-dialog.css"
+  ]
+}
