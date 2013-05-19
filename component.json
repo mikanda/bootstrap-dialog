@@ -7,7 +7,10 @@
   "dependencies": {
     "component/dialog": "0.0.6",
     "luka5/bootstrap-modal": "*",
-    "component/jquery": "*"
+    "component/jquery": "*",
+    "matthewp/attr": "*",
+    "jofan/Draggy": "*",
+    "DamonOehlman/stylar": "*"
   },
   "development": {
     "component/jquery": "*",

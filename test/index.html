@@ -11,10 +11,11 @@
       var dialog = require('bootstrap-dialog')
         , $ = require('component-jquery');
 
-      dialog('Message only')
+      dialog('Move me!')
       .effect('slide')
       .show()
-      .hide(1500)
+      .closable()
+      .movable()
       .on('hide', function(){
         console.log('closed first');
       
@@ -29,6 +30,7 @@
           .effect('scale')
           .show()
           .closable()
+          .movable()
           .on('hide', function(){
             console.log('closed third');
       

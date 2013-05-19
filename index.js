@@ -4,7 +4,10 @@
 var template = require('./template'),
     o = require('jquery'),
     dialog = require('dialog'),
-    Dialog = dialog.Dialog;
+    Dialog = dialog.Dialog,
+    Draggy = require('draggy'),
+    attr = require('attr'),
+    stylar = require('stylar');
 
 /*
  * create new instance
@@ -30,7 +33,7 @@ BootstrapDialog.prototype.render = function(options){
   
   this.template = template;
   el = this.el = o(this.template);
-  
+
   if (!foot) {
     el.find('.modal-footer').remove();
   } else {
@@ -44,6 +47,28 @@ BootstrapDialog.prototype.render = function(options){
   Dialog.prototype.render.call(this, options);
 };
 
+BootstrapDialog.prototype.movable = function () {
+  /*
+   * make header-text unselectable and set cursor to move
+   */
+  var header = this.el.find('.modal-header')[0];
+  if (header) {
+    attr(header)
+      .set('unselectable', 'on');
+    stylar(header)
+      .set('user-select', 'none')
+      .set('cursor', 'move');
+  }
+  /*
+   * make el draggable
+   */
+  new Draggy(this.el[0]);
+  return this;
+  /*
+   * TODO:
+   * make whole el moveable but just title draggable
+   */
+};
 
 module.exports = function (title, msg, foot) {
   switch (arguments.length) {
