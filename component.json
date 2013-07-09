@@ -6,6 +6,7 @@
   "keywords": [],
   "dependencies": {
     "component/dialog": "0.0.6",
+    "component/emitter": "*",
     "luka5/bootstrap-modal": "*",
     "component/jquery": "*",
     "matthewp/attr": "*",
@@ -19,6 +20,7 @@
   "license": "LGPLv3",
   "scripts": [
     "index.js",
+    "bootstrap-dialog.js",
     "template.js"
   ],
   "styles": [

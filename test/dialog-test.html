@@ -1,0 +1,31 @@
+<!DOCTYPE 5>
+<html>
+  <head>
+    <title>Dialog</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../build/build.css" />
+  </head>
+  <body>
+    <script src="../build/build.js"></script>
+    <script>
+      var dialog = require('bootstrap-dialog')
+        , $ = require('component-jquery');
+
+      var d1,d2;
+      
+      d2 = dialog('Second')
+      .on('hide', function(){
+        if(d1)
+          d1.show().hide(1500);
+      });
+
+      d1 = dialog('First')
+      .show()
+      .hide(1500)
+      .on('hide', function(){
+        d2.show().hide(1500);
+      });
+
+    </script>
+  </body>
+</html>

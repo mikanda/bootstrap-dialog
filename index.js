@@ -1,84 +1,114 @@
-/*
- * require dependencies
- */
-var template = require('./template'),
-    o = require('jquery'),
-    dialog = require('dialog'),
-    Dialog = dialog.Dialog,
-    Draggy = require('draggy'),
-    attr = require('attr'),
-    stylar = require('stylar');
 
-/*
- * create new instance
- * call the Dialog super constructor
+/**
+ * Module dependencies.
  */
-function BootstrapDialog (options) {
-  return Dialog.call(this, options);
+
+var dialog = require('./bootstrap-dialog'),
+    Emitter = require('emitter');
+
+/**
+ * Module exports.
+ */
+
+module.exports = function(){
+  var args = Array.prototype.slice.call(arguments);
+  return new Dialog(args);
+};
+
+/**
+ * More bulletproof implementation of dialog built on top of the
+ * bootstrap abstraction.  Can be used with multiple instances.
+ */
+
+function Dialog(args) {
+  this.args = args;
 }
-/*
- * inherit the prototype of Dialog
+Emitter(Dialog.prototype);
+
+/**
+ * Initialize the instance with a new dialog.
  */
-BootstrapDialog.prototype = Object.create(Dialog.prototype);
 
-/*
- * override the render function
- *  - change template from dialogs to this
- *  - add footer functionality
- *  - call the super render function
- */
-BootstrapDialog.prototype.render = function(options){
-  var foot = options.foot,
-      el;
-  
-  this.template = template;
-  el = this.el = o(this.template);
+Dialog.prototype.init = function(){
+  var self = this,
+      emit = this.emit.bind(this),
+      methods,
+      events;
 
-  if (!foot) {
-    el.find('.modal-footer').remove();
-  } else {
-    if ('string' == typeof foot) {
-      el.find('.modal-footer').text(foot);
-    } else if (foot) {
-      el.find('.modal-footer').append(foot.el || foot);
-    }
-  }
+  // events to delegate
 
-  Dialog.prototype.render.call(this, options);
+  events = [
+    'show',
+    'hide',
+    'close'
+  ];
+
+  // methods to proxy
+
+  methods = [
+    'overlay',
+    'closable',
+    'escapable'
+  ];
+
+  // create new dialog on the fly
+
+  this.dialog = dialog.apply(null, this.args);
+
+  // delegate the important events
+
+  events.forEach(function(event){
+    self.dialog.on(event, function(){
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(event);
+
+      // delegate event
+
+      self.emit.apply(self, args);
+    });
+  });
+  methods.forEach(function(method){
+    self[method] = function(){
+      if (self.dialog) {
+        self.dialog[method].apply(self.dialog, arguments);
+      }
+      return self;
+    };
+  });
+  return this.dialog;
 };
 
-BootstrapDialog.prototype.movable = function () {
-  /*
-   * make header-text unselectable and set cursor to move
-   */
-  var header = this.el.find('.modal-header')[0];
-  if (header) {
-    attr(header)
-      .set('unselectable', 'on');
-    stylar(header)
-      .set('user-select', 'none')
-      .set('cursor', 'move');
+/**
+ * Show the dialog.
+ *
+ * @return {Dialog} to make it easy to add overlay etc
+ */
+
+Dialog.prototype.show = function(){
+  if (this.dialog) {
+    this.dialog.show.apply(this.dialog, arguments);
+    return this;
   }
-  /*
-   * make el draggable
-   */
-  new Draggy(this.el[0]);
+  this.init().show().overlay();
   return this;
-  /*
-   * TODO:
-   * make whole el moveable but just title draggable
-   */
 };
 
-module.exports = function (title, msg, foot) {
-  switch (arguments.length) {
-    case 3:
-      return new BootstrapDialog({ title: title, message: msg, foot: foot });
-    case 2:
-      return new BootstrapDialog({ title: title, message: msg });
-    case 1:
-      return new BootstrapDialog({ message: title });
+/**
+ * Hide the dialog.
+ *
+ * @return {Dialog} for chaining
+ */
+
+Dialog.prototype.hide = function(){
+  var self = this;
+  if (this.dialog) {
+
+    // remove the nested instance
+
+    this.dialog.on('hide', function(){
+      self.dialog = null;
+    });
+    this.dialog.hide.apply(this.dialog, arguments);
   }
+  return this;
 };
-
-module.exports.BootstrapDialog = BootstrapDialog;
