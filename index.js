@@ -66,6 +66,9 @@ Dialog.prototype.init = function(){
   // create new dialog on the fly
 
   this.dialog = dialog.apply(null, this.args);
+  this.dialog.on('hide', function(){
+    delete self.dialog;
+  });
 
   // delegate the important events
 
@@ -118,7 +121,6 @@ Dialog.prototype.hide = function(){
     // remove the nested instance
 
     this.dialog.hide.apply(this.dialog, arguments);
-    self.dialog = null;
   }
   return this;
 };
