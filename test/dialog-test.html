@@ -14,12 +14,16 @@
       var d1,d2;
       
       d2 = dialog('Second')
+      .closable()
+      .overlay()
       .on('hide', function(){
         if(d1)
           d1.show().hide(1500);
       });
 
       d1 = dialog('First')
+      .closable()
+      .overlay()
       .show()
       .hide(1500)
       .on('hide', function(){

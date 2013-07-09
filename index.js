@@ -21,8 +21,28 @@ module.exports = function(){
  */
 
 function Dialog(args) {
+  var self = this,
+      opts;
+  opts = [
+    'closable',
+    'overlay',
+    'escapable'
+  ];
+
+  // generate option methods
+
+  opts.forEach(function(opt){
+    self[opt] = function(){
+      self._renderOpts.push(opt);
+      return self;
+    };
+  });
+  this._renderOpts = [];
   this.args = args;
 }
+
+// inherit from emitter
+
 Emitter(Dialog.prototype);
 
 /**
@@ -43,14 +63,6 @@ Dialog.prototype.init = function(){
     'close'
   ];
 
-  // methods to proxy
-
-  methods = [
-    'overlay',
-    'closable',
-    'escapable'
-  ];
-
   // create new dialog on the fly
 
   this.dialog = dialog.apply(null, this.args);
@@ -67,14 +79,6 @@ Dialog.prototype.init = function(){
       self.emit.apply(self, args);
     });
   });
-  methods.forEach(function(method){
-    self[method] = function(){
-      if (self.dialog) {
-        self.dialog[method].apply(self.dialog, arguments);
-      }
-      return self;
-    };
-  });
   return this.dialog;
 };
 
@@ -85,11 +89,19 @@ Dialog.prototype.init = function(){
  */
 
 Dialog.prototype.show = function(){
-  if (this.dialog) {
-    this.dialog.show.apply(this.dialog, arguments);
-    return this;
-  }
-  this.init().show().overlay();
+  var d;
+
+  // use previously created dialog
+
+  if (this.dialog) d = this.dialog;
+  else d = this.init();
+
+  // apply scheduled options
+
+  this._renderOpts.forEach(function(opt){
+    d[opt]();
+  });
+  d.show.apply(d, arguments);
   return this;
 };
 
@@ -105,10 +117,8 @@ Dialog.prototype.hide = function(){
 
     // remove the nested instance
 
-    this.dialog.on('hide', function(){
-      self.dialog = null;
-    });
     this.dialog.hide.apply(this.dialog, arguments);
+    self.dialog = null;
   }
   return this;
 };
